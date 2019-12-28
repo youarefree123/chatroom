@@ -41,6 +41,54 @@ public class Client extends Thread {
             }
         } catch (Exception e) {}
     }
+
+
+    /**
+     * 完成注册监听类
+     */
+    class RegisteredListen implements ActionListener{
+        JTextField textField; //用户名域
+        JPasswordField pwdField1; //密码域
+        JPasswordField pwdField2; //确认密码域
+        JFrame RegisterFrame;  // 注册窗口
+        Statement statement; //SQL语句操作对象
+
+        public void setJTextField(JTextField textField) {
+            this.textField = textField;
+        }
+        public void setJPasswordField1(JPasswordField pwdField1) {
+            this.pwdField1 = pwdField1;
+        }
+        public void setJPasswordField2(JPasswordField pwdField2) {
+            this.pwdField2 = pwdField2;
+        }
+        public void setJFrame(JFrame jFrame) {
+            this.RegisterFrame = jFrame;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            userName = textField.getText(); //得到用户名
+            String userPwd1 = String.valueOf(pwdField1.getPassword());  // getPassword方法获得char数组，再转换成String
+            String userPwd2 = String.valueOf(pwdField2.getPassword());  // getPassword方法获得char数组，再转换成String
+            try {
+                statement = new UserDB().getStatement(); //得到statement对象
+            }
+            catch (Exception exception){}
+            if (userPwd1.equals(userPwd2)){ //如果两次密码输入不一致
+                JOptionPane.showMessageDialog(RegisterFrame, "两次输入密码不一致，请重新输入！",
+                        "提示", JOptionPane.WARNING_MESSAGE);
+            }
+            else if(UserDB.check(statement,userName)){ //如果用户名已经注册了
+                JOptionPane.showMessageDialog(RegisterFrame, "该用户名已经被注册，请重新输入！", "提示", JOptionPane.WARNING_MESSAGE);
+            }
+            else {
+                UserDB.update(statement,userName,userPwd1);
+                JOptionPane.showMessageDialog(RegisterFrame, "恭喜你！注册成功", "注册成功", JOptionPane.WARNING_MESSAGE);
+                RegisterFrame.setVisible(false);
+            }
+
+        }
+    }
     /**
      * 登陆监听类
      */
@@ -98,21 +146,21 @@ public class Client extends Thread {
      */
     class ChatViewListen implements ActionListener{
         public void setJTextField(JTextField text) {
-            textInput = text;  // 放在外部类，因为其它地方也要用到
-        }
-        public void setJTextArea(JTextArea textArea) {
-            textShow = textArea;  // 放在外部类，因为其它地方也要用到
-        }
-        public void setChatViewJf(JFrame jFrame) {
-            chatViewJFrame = jFrame;  // 放在外部类，因为其它地方也要用到
-            // 设置关闭聊天界面的监听
-            chatViewJFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    out.println("用户【" + userName + "】离开聊天室！");
-                    out.flush();
-                    System.exit(0);
-                }
-            });
+                textInput = text;  // 放在外部类，因为其它地方也要用到
+            }
+            public void setJTextArea(JTextArea textArea) {
+                textShow = textArea;  // 放在外部类，因为其它地方也要用到
+            }
+            public void setChatViewJf(JFrame jFrame) {
+                chatViewJFrame = jFrame;  // 放在外部类，因为其它地方也要用到
+                // 设置关闭聊天界面的监听
+                chatViewJFrame.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        out.println("用户【" + userName + "】离开聊天室！");
+                        out.flush();
+                        System.exit(0);
+                    }
+                });
         }
         // 监听执行函数
         public void actionPerformed(ActionEvent event) {
@@ -133,4 +181,20 @@ public class Client extends Thread {
             } catch (Exception e) {}
         }
     }
+
+    /**
+     * 注册监听类
+     */
+    class RegisterListen implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+//            RegisterView registerView = new RegisterView();
+            new RegisterView();
+        }
+    }
+
+
+
+
 }

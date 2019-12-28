@@ -7,7 +7,9 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+/**
+ * 聊天室界面模块
+ */
 public class chatView {
     String userName;  //由客户端登录时设置
     Client.ChatViewListen listener; //聊天界面监听

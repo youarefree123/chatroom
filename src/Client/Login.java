@@ -5,15 +5,14 @@ package Client;
  */
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+
 import javax.swing.*;
 
 public class Login {
     private JTextField textField = null; //用户名文本域
     private JPasswordField pwdField = null; //密码文本域
     Client.LoginListen loginListener=null; //登录按钮监听
-
+    Client.RegisterListen registerListen = null; //注册按钮监听
     // 构造函数
     public Login() {
         init();
@@ -53,7 +52,7 @@ public class Login {
         loginListener.setJTextField(textField);  // 将用户名传入
         loginListener.setJPasswordField(pwdField); //将密码传入
         loginButton.addActionListener(loginListener);  // 登陆按钮添加监听
-//        registerButton.addActionListener(); //注册按钮添加监听
+        registerButton.addActionListener(registerListen); //注册按钮添加监听
         loginListener.setJFrame(frame); //将整个框架传入
 
         frame.add(mainPanel);

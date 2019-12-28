@@ -119,18 +119,27 @@ public class UserDB {
 
 
     /**
-     * 查询用户:如果查询到了就返回false,否则返回true
+     * 查询用户:如果查询到了就返回true,否则返回false
      * @param statement
      * @param name
      */
-    public static boolean check(Statement statement, String name)throws SQLException{
-        String sql = "select name from chat.user where name = '"+name+"'";
-        ResultSet resultSet = statement.executeQuery (sql);
-        if(resultSet != null)
-            return false;
-        else
-            return true;
+    public static boolean check(Statement statement, String name){
+        boolean flag = true;
+        try{
+            String sql = "select name from chat.user where name = '"+name+"'";
+            ResultSet resultSet = statement.executeQuery (sql);
+            if(resultSet != null)
+                flag = true;
+            else
+                flag = false;
+        }
+        catch (Exception e){}
+        finally {
+            return  flag;
+        }
 }
+
+
     /**
      * 插入数据
      * @param statement
@@ -138,19 +147,21 @@ public class UserDB {
      * @param password
      * @throws SQLException
      */
-    public static void update(Statement statement,String name ,String password) throws SQLException
+    public static void update(Statement statement,String name ,String password)
     {
-
-        if(check(statement,name)){
-            String sql = "INSERT INTO USER VALUES ('"+name+"','"+password+"')";
-            //执行更新操作
-            statement.executeUpdate(sql);
-            System.out.println("插入成功");
+        try{
+            if(check(statement,name)){
+                String sql = "INSERT INTO USER VALUES ('"+name+"','"+password+"')";
+                //执行更新操作
+                statement.executeUpdate(sql);
+                System.out.println("插入成功");
+            }
+            else{
+                JFrame chatViewJFrame = new JFrame(); //聊天室面板
+                JOptionPane.showMessageDialog(chatViewJFrame, "该用户已经存在！", "提示", JOptionPane.WARNING_MESSAGE);
+            }
         }
-        else{
-        JFrame chatViewJFrame = new JFrame(); //聊天室面板
-        JOptionPane.showMessageDialog(chatViewJFrame, "该用户已经存在！", "提示", JOptionPane.WARNING_MESSAGE);
-     }
+        catch (Exception e){}
     }
 
 
