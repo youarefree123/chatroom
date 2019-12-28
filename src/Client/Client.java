@@ -1,5 +1,7 @@
 package Client;
 
+import DataBase.UserDB;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +13,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Client extends Thread {
     static Socket mySocket = null;  // 一定要加上static，否则新建线程时会清空
@@ -45,6 +49,7 @@ public class Client extends Thread {
         JPasswordField pwdField;
         JFrame loginJFrame;  // 登录窗口本身
         chatView chatView = null;
+        Statement statement; //SQL语句操作对象
 
         public void setJTextField(JTextField textField) {
             this.textField = textField;
@@ -56,9 +61,14 @@ public class Client extends Thread {
             this.loginJFrame = jFrame;
         }
         public void actionPerformed(ActionEvent event) {
-            userName = textField.getText();
-            String userPwd = String.valueOf(pwdField.getPassword());  // getPassword方法获得char数组
-            if(userName.length() >= 1 && userPwd.equals("123")) {  // 密码为123并且用户名长度大于等于1
+            userName = textField.getText(); //得到用户名
+            String userPwd = String.valueOf(pwdField.getPassword());  // getPassword方法获得char数组，再转换成String
+            try {
+                statement = new UserDB().getStatement(); //得到statement对象
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if(UserDB.verify(statement,userName,userPwd)) {  // 如果用户名密码在user表中
                 chatView = new chatView(userName);  // 新建聊天窗口,设置聊天窗口的用户名（静态）
                 // 建立和服务器的联系
                 try {

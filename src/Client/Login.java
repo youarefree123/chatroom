@@ -12,8 +12,7 @@ import javax.swing.*;
 public class Login {
     private JTextField textField = null; //用户名文本域
     private JPasswordField pwdField = null; //密码文本域
-    Client.LoginListen listener=null; //登录按钮监听
-
+    Client.LoginListen loginListener=null; //登录按钮监听
 
     // 构造函数
     public Login() {
@@ -50,18 +49,12 @@ public class Login {
         mainPanel.add(panel2, BorderLayout.CENTER);
 
         // 设置监听
-        listener = new Client().new LoginListen();  // 新建监听类
-        listener.setJTextField(textField);  // 将用户名传入
-        listener.setJPasswordField(pwdField); //将密码传入
-//        pwdField.addActionListener(listener);  // 密码框添加监听
-        loginButton.addActionListener(listener);  // 登陆按钮添加监听
-        loginButton.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-            }
-        });
-        listener.setJFrame(frame); //将整个框架传入
+        loginListener = new Client().new LoginListen();  // 新建监听类
+        loginListener.setJTextField(textField);  // 将用户名传入
+        loginListener.setJPasswordField(pwdField); //将密码传入
+        loginButton.addActionListener(loginListener);  // 登陆按钮添加监听
+//        registerButton.addActionListener(); //注册按钮添加监听
+        loginListener.setJFrame(frame); //将整个框架传入
 
         frame.add(mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // 设置关闭图标作用
