@@ -33,7 +33,7 @@ import java.util.concurrent.locks.Lock;
  */
 public class UserDB {
     Statement statement; //语句对象
-    public UserDB()throws SQLException,IOException {
+    public UserDB()throws SQLException{
             Connection conn = getConnection();
             this.statement = conn.createStatement(); //可以向数据库发送要执行的SQL语句
     }
@@ -48,15 +48,15 @@ public class UserDB {
      * @throws SQLException
      * @throws IOException
      */
-    public static Connection getConnection() throws SQLException, IOException {
-        Properties prop = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("./src/DataBase/database.properties"))) {
-            prop.load(in);
-        }
-        String drivers = prop.getProperty("jdbc.drivers");
-        String url = prop.getProperty("jdbc.url"); //新版mysql驱动需要加时区
-        String username = prop.getProperty("jdbc.username");
-        String password = prop.getProperty("jdbc.password");
+    public static Connection getConnection() throws SQLException{
+//        Properties prop = new Properties();
+//        try (InputStream in = Files.newInputStream(Paths.get("./DataBase/database.properties"))) {
+//            prop.load(in);
+//        }
+        String drivers = "com.mysql.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/chat?useUnicode=true&useSSL=false"; //新版mysql驱动需要加时区
+        String username = "root";
+        String password = "147258369";
         return DriverManager.getConnection(url, username, password);
     }
 
@@ -124,14 +124,16 @@ public class UserDB {
      * @param name
      */
     public static boolean check(Statement statement, String name){
-        boolean flag = true;
+        boolean flag = false;
         try{
-            String sql = "select name from chat.user where name = '"+name+"'";
+            String sql = "SELECT NAME FROM CHAT.USER WHERE NAME = '"+name+"'";
             ResultSet resultSet = statement.executeQuery (sql);
-            if(resultSet != null)
-                flag = true;
-            else
-                flag = false;
+            while (resultSet.next()){
+                if (resultSet.getString(1).equals(name)){
+                    flag = true;
+                    break;
+                }
+            }
         }
         catch (Exception e){}
         finally {
@@ -150,16 +152,10 @@ public class UserDB {
     public static void update(Statement statement,String name ,String password)
     {
         try{
-            if(check(statement,name)){
-                String sql = "INSERT INTO USER VALUES ('"+name+"','"+password+"')";
+                String sql = "INSERT INTO CHAT.USER VALUES ('"+name+"','"+password+"')";
                 //执行更新操作
                 statement.executeUpdate(sql);
-                System.out.println("插入成功");
-            }
-            else{
-                JFrame chatViewJFrame = new JFrame(); //聊天室面板
-                JOptionPane.showMessageDialog(chatViewJFrame, "该用户已经存在！", "提示", JOptionPane.WARNING_MESSAGE);
-            }
+//                System.out.println("插入成功");
         }
         catch (Exception e){}
     }
@@ -175,6 +171,7 @@ public class UserDB {
 //
 ////        showResultSet(statement); //列出表内数据
 ////          update(statement,"蒋骏","123456");
-//         System.out.println(verify(statement,"蒋骏","123"));
+////         System.out.println(check(statement,"删除"));
+//        System.out.println(verify(statement,"蒋骏","123456"));
 //    }
 }

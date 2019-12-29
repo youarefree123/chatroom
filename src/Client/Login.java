@@ -48,13 +48,14 @@ public class Login {
         mainPanel.add(panel2, BorderLayout.CENTER);
 
         // 设置监听
-        loginListener = new Client().new LoginListen();  // 新建监听类
+        loginListener = new Client().new LoginListen();  // 新建登陆按钮监听类
         loginListener.setJTextField(textField);  // 将用户名传入
         loginListener.setJPasswordField(pwdField); //将密码传入
-        loginButton.addActionListener(loginListener);  // 登陆按钮添加监听
-        registerButton.addActionListener(registerListen); //注册按钮添加监听
         loginListener.setJFrame(frame); //将整个框架传入
+        loginButton.addActionListener(loginListener);  // 登陆按钮添加监听
 
+        registerListen = new Client().new RegisterListen(); // 新建注册按钮监听类
+        registerButton.addActionListener(registerListen); //注册按钮添加监听
         frame.add(mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // 设置关闭图标作用
         frame.setVisible(true);  // 设置可见

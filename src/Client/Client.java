@@ -13,8 +13,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Client extends Thread {
     static Socket mySocket = null;  // 一定要加上static，否则新建线程时会清空
@@ -72,17 +73,22 @@ public class Client extends Thread {
             String userPwd2 = String.valueOf(pwdField2.getPassword());  // getPassword方法获得char数组，再转换成String
             try {
                 statement = new UserDB().getStatement(); //得到statement对象
+                }
+            catch (Exception exception){
+                JOptionPane.showMessageDialog(RegisterFrame, exception.toString(), "提示", JOptionPane.WARNING_MESSAGE);
+                System.out.println("URL=jdbc:mysql://localhost:3306/chat?useUnicode=true&useSSL=false");
+                exception.printStackTrace();
             }
-            catch (Exception exception){}
-            if (userPwd1.equals(userPwd2)){ //如果两次密码输入不一致
+
+            if(UserDB.check(statement,userName)){ //如果用户名已经注册了
+                JOptionPane.showMessageDialog(RegisterFrame, "该用户名已经被注册，请重新输入！", "提示", JOptionPane.WARNING_MESSAGE);
+            }
+            else if (!userPwd1.equals(userPwd2)){ //如果两次密码输入不一致
                 JOptionPane.showMessageDialog(RegisterFrame, "两次输入密码不一致，请重新输入！",
                         "提示", JOptionPane.WARNING_MESSAGE);
             }
-            else if(UserDB.check(statement,userName)){ //如果用户名已经注册了
-                JOptionPane.showMessageDialog(RegisterFrame, "该用户名已经被注册，请重新输入！", "提示", JOptionPane.WARNING_MESSAGE);
-            }
             else {
-                UserDB.update(statement,userName,userPwd1);
+                UserDB.update(statement,userName,userPwd1); //添加该用户
                 JOptionPane.showMessageDialog(RegisterFrame, "恭喜你！注册成功", "注册成功", JOptionPane.WARNING_MESSAGE);
                 RegisterFrame.setVisible(false);
             }
@@ -135,6 +141,9 @@ public class Client extends Thread {
                     ClientFileThread fileThread = new ClientFileThread(userName, chatViewJFrame, out);
                     fileThread.start();
             }
+            else if(!UserDB.check(statement,userName)){ //如果没有找到用户名
+                JOptionPane.showMessageDialog(loginJFrame, "用户名:"+userName+"未被注册!", "提示", JOptionPane.WARNING_MESSAGE);
+            }
             else {
                 JOptionPane.showMessageDialog(loginJFrame, "账号或密码错误，请重新输入！", "提示", JOptionPane.WARNING_MESSAGE);
             }
@@ -168,7 +177,7 @@ public class Client extends Thread {
                 String str = textInput.getText();
                 // 文本框内容为空
                 if("".equals(str)) {
-                    textInput.grabFocus();  // 设置焦点（可行）
+                    textInput.grabFocus();  // 设置焦点
                     // 弹出消息对话框（警告消息）
                     JOptionPane.showMessageDialog(chatViewJFrame, "输入为空，请重新输入！", "提示", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -176,7 +185,7 @@ public class Client extends Thread {
                 out.println(userName + "说：" + str);  // 输出给服务端
                 out.flush();  // 清空缓冲区out中的数据
                 textInput.setText("");  // 清空文本框
-                textInput.grabFocus();  // 设置焦点（可行）
+//                textInput.grabFocus();  // 设置焦点（可行）
 //				textInput.requestFocus(true);  // 设置焦点（可行）
             } catch (Exception e) {}
         }
@@ -186,11 +195,12 @@ public class Client extends Thread {
      * 注册监听类
      */
     class RegisterListen implements ActionListener{
-
+        RegisterView registerView = null;
         @Override
         public void actionPerformed(ActionEvent e) {
-//            RegisterView registerView = new RegisterView();
-            new RegisterView();
+//            System.out.println("你听到没");
+            registerView = new RegisterView();
+
         }
     }
 

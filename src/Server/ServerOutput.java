@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ServerOutput extends Thread{
     Socket nowSocket = null; //得到的当前客户端进程
@@ -22,9 +24,11 @@ public class ServerOutput extends Thread{
             // 获取客户端信息并把信息发送给所有客户端
             while (true) {
                 String str = in.readLine();
+                String nowDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());//得到当前时间
                 // 发送给所有客户端
                 for(Socket socket: Server.list) {
                     out = new PrintWriter(socket.getOutputStream());  // 对每个客户端新建相应的socket套接字
+                    out.println(nowDate);
                     if(socket == nowSocket) {  // 发送给当前客户端
                         out.println("(你)" + str);
                     }
