@@ -5,19 +5,21 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * 服务器后台框架类
+ * 服务器后台界面类
  */
 public class Backstage {
     private JTextArea textArea; //显示聊天室信息
-
     // 用于向文本区域添加信息
     void setTextArea(String str) {
-        textArea.append(str+'\n');
+        String nowDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());//得到当前时间
+        textArea.append(nowDate+'\n'); //加时间
+        textArea.append(str+'\n'); // 加信息
         textArea.setCaretPosition(textArea.getDocument().getLength());  // 设置滚动条在最下面
     }
-
 
     // 构造函数
     public Backstage() {
@@ -35,27 +37,14 @@ public class Backstage {
         mainPanel.add(lable); //北
 
         JPanel chatPanel = new JPanel(); //聊天监管面板
-
         textArea = new JTextArea(25,35); // 新建文本区域并设置长宽
         textArea.setEditable(false);  // 设置为不可修改
         JScrollPane textScroll = new JScrollPane(textArea);  // 设置滚动面板（装入textArea）
         textScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);  // 显示垂直条
-        chatPanel.add(textScroll);
-
-
-
-        mainPanel.add(chatPanel); //西
-
-
-
-
-//        frame.addWindowListener(new WindowAdapter() {
-//            public void windowClosing(WindowEvent e) {
-//                System.exit(0);
-//            }
-//        });
-
+        chatPanel.add(textScroll); //添加
+        mainPanel.add(chatPanel);
         frame.add(mainPanel);
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // 设置关闭图标作用
         frame.setVisible(true);  // 设置可见
     }

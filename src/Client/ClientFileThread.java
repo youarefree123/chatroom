@@ -1,19 +1,17 @@
 package Client;
-
-
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
 
 public class ClientFileThread extends Thread{
     private Socket socket = null;
-    private JFrame chatViewJFrame = null;
+    private JFrame chatViewJFrame = null;   //聊天界面
     static String userName = null;
     static PrintWriter out = null;  // 普通消息的发送（Server.java传来的值）
-    static DataInputStream fileIn = null;
-    static DataOutputStream fileOut = null;
-    static DataInputStream fileReader = null;
-    static DataOutputStream fileWriter = null;
+    static DataInputStream fileIn = null;   //接收文件名，文件大小
+    static DataOutputStream fileOut = null; //发送文件名，文件大小
+    static DataInputStream fileReader = null; //接收文件数据
+    static DataOutputStream fileWriter = null; //发送文件数据
 
     public ClientFileThread(String userName, JFrame chatViewJFrame, PrintWriter out) {
         ClientFileThread.userName = userName;
@@ -25,13 +23,13 @@ public class ClientFileThread extends Thread{
     public void run() {
         try {
             InetAddress addr = InetAddress.getByName(null);  // 获取主机地址
-            socket = new Socket(addr, 8848);  // 客户端套接字
+            socket = new Socket("192.168.1.105", 8848);  // 客户端套接字
             fileIn = new DataInputStream(socket.getInputStream());  // 输入流
             fileOut = new DataOutputStream(socket.getOutputStream());  // 输出流
             // 接收文件
             while(true) {
-                String textName = fileIn.readUTF();
-                long totleLength = fileIn.readLong();
+                String textName = fileIn.readUTF();  //得到文件名
+                long totleLength = fileIn.readLong(); //得到文件长度
                 int result = JOptionPane.showConfirmDialog(chatViewJFrame, "是否接受？", "提示",
                         JOptionPane.YES_NO_OPTION);
                 int length = -1;
@@ -41,17 +39,17 @@ public class ClientFileThread extends Thread{
                 if(result == 0){
 					out.println("【" + userName + "选择了接收文件！】");
 					out.flush();
-                    File userFile = new File("./" + userName);
+                    File userFile = new File("./" + userName); //文件放入当前目录
                     if(!userFile.exists()) {  // 新建当前用户的文件夹
                         userFile.mkdir();
                     }
                     File file = new File("./" + userName + "\\"+ textName);
-                    fileWriter = new DataOutputStream(new FileOutputStream(file));
+                    fileWriter = new DataOutputStream(new FileOutputStream(file)); //接收文件
                     while((length = fileIn.read(buff)) > 0) {  // 把文件写进本地
                         fileWriter.write(buff, 0, length);
                         fileWriter.flush();
                         curLength += length;
-                        if(curLength == totleLength) {  // 强制结束
+                        if(curLength == totleLength) {  // 接收完毕后结束
                             break;
                         }
                     }
@@ -61,7 +59,7 @@ public class ClientFileThread extends Thread{
                     JOptionPane.showMessageDialog(chatViewJFrame, "文件存放地址：\n" +
                            file.getAbsolutePath() , "提示", JOptionPane.INFORMATION_MESSAGE);
                 }
-                else {  // 不接受文件
+                else {  // 不接受文件的话，还是接收数据，但是不写入本地
                     while((length = fileIn.read(buff)) > 0) {
                         curLength += length;
                         if(curLength == totleLength) {  // 强制结束
@@ -77,7 +75,7 @@ public class ClientFileThread extends Thread{
     // 客户端发送文件
     static void outFileToServer(String path) {
         try {
-            File file = new File(path);
+            File file = new File(path);   //得到文件路径
             fileReader = new DataInputStream(new FileInputStream(file));
             fileOut.writeUTF(file.getName());  // 发送文件名字
             fileOut.flush();
@@ -86,11 +84,9 @@ public class ClientFileThread extends Thread{
             int length = -1;
             byte[] buff = new byte[1024];
             while ((length = fileReader.read(buff)) > 0) {  // 发送内容
-
                 fileOut.write(buff, 0, length);
                 fileOut.flush();
             }
-
             out.println("【" + userName + "已成功发送文件！】");
             out.flush();
         } catch (Exception e) {}

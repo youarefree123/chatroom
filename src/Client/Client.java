@@ -1,7 +1,5 @@
 package Client;
-
 import DataBase.UserDB;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +12,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Client extends Thread {
     static Socket mySocket = null;  // 一定要加上static，否则新建线程时会清空
@@ -26,8 +22,7 @@ public class Client extends Thread {
     private static PrintWriter out = null; //写
     private static String userName; //用户名
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args) { //开启登陆界面
         new Login();
     }
 
@@ -43,7 +38,6 @@ public class Client extends Thread {
         } catch (Exception e) {}
     }
 
-
     /**
      * 完成注册监听类
      */
@@ -54,16 +48,16 @@ public class Client extends Thread {
         JFrame RegisterFrame;  // 注册窗口
         Statement statement; //SQL语句操作对象
 
-        public void setJTextField(JTextField textField) {
+        public void setJTextField(JTextField textField) { //得到用户名
             this.textField = textField;
         }
-        public void setJPasswordField1(JPasswordField pwdField1) {
+        public void setJPasswordField1(JPasswordField pwdField1) { //密码
             this.pwdField1 = pwdField1;
         }
-        public void setJPasswordField2(JPasswordField pwdField2) {
+        public void setJPasswordField2(JPasswordField pwdField2) { //确认密码
             this.pwdField2 = pwdField2;
         }
-        public void setJFrame(JFrame jFrame) {
+        public void setJFrame(JFrame jFrame) {  //得到框架
             this.RegisterFrame = jFrame;
         }
         @Override
@@ -76,7 +70,6 @@ public class Client extends Thread {
                 }
             catch (Exception exception){
                 JOptionPane.showMessageDialog(RegisterFrame, exception.toString(), "提示", JOptionPane.WARNING_MESSAGE);
-                System.out.println("URL=jdbc:mysql://localhost:3306/chat?useUnicode=true&useSSL=false");
                 exception.printStackTrace();
             }
 
@@ -92,7 +85,6 @@ public class Client extends Thread {
                 JOptionPane.showMessageDialog(RegisterFrame, "恭喜你！注册成功", "注册成功", JOptionPane.WARNING_MESSAGE);
                 RegisterFrame.setVisible(false);
             }
-
         }
     }
     /**
@@ -105,15 +97,16 @@ public class Client extends Thread {
         chatView chatView = null;
         Statement statement; //SQL语句操作对象
 
-        public void setJTextField(JTextField textField) {
+        public void setJTextField(JTextField textField) {  //获得发送文本域
             this.textField = textField;
         }
-        public void setJPasswordField(JPasswordField pwdField) {
+        public void setJPasswordField(JPasswordField pwdField) { //获得公共文本域
             this.pwdField = pwdField;
         }
-        public void setJFrame(JFrame jFrame) {
+        public void setJFrame(JFrame jFrame) { //获得框架
             this.loginJFrame = jFrame;
         }
+
         public void actionPerformed(ActionEvent event) {
             userName = textField.getText(); //得到用户名
             String userPwd = String.valueOf(pwdField.getPassword());  // getPassword方法获得char数组，再转换成String
@@ -127,7 +120,7 @@ public class Client extends Thread {
                 // 建立和服务器的联系
                 try {
                     InetAddress addr = InetAddress.getByName(null);  // 获取主机地址
-                    mySocket = new Socket(addr,9700);  // 客户端套接字
+                    mySocket = new Socket("192.168.1.105",9700);  // 客户端套接字
                     loginJFrame.setVisible(false);  // 隐藏登录窗口
                     out = new PrintWriter(mySocket.getOutputStream());  // 输出流
                     out.println("用户【" + userName + "】进入聊天室！");  // 发送用户名给服务器
@@ -155,7 +148,7 @@ public class Client extends Thread {
      */
     class ChatViewListen implements ActionListener{
         public void setJTextField(JTextField text) {
-                textInput = text;  // 放在外部类，因为其它地方也要用到
+                textInput = text;  // 得到发送域
             }
             public void setJTextArea(JTextArea textArea) {
                 textShow = textArea;  // 放在外部类，因为其它地方也要用到
@@ -185,8 +178,7 @@ public class Client extends Thread {
                 out.println(userName + "说：" + str);  // 输出给服务端
                 out.flush();  // 清空缓冲区out中的数据
                 textInput.setText("");  // 清空文本框
-//                textInput.grabFocus();  // 设置焦点（可行）
-//				textInput.requestFocus(true);  // 设置焦点（可行）
+                textInput.grabFocus();  // 设置焦点：一开始光标就在发送域
             } catch (Exception e) {}
         }
     }
@@ -198,13 +190,7 @@ public class Client extends Thread {
         RegisterView registerView = null;
         @Override
         public void actionPerformed(ActionEvent e) {
-//            System.out.println("你听到没");
             registerView = new RegisterView();
-
         }
     }
-
-
-
-
 }

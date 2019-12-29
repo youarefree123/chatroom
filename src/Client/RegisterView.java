@@ -57,6 +57,7 @@ public class RegisterView {
         listener.setJPasswordField1(pwdField1); //将密码传入
         listener.setJPasswordField2(pwdField2); //将二次确认密码传入
         listener.setJFrame(frame); //将整个框架传入
+        pwdField2.addActionListener(listener); //敲击回车出发事件
         registerButton.addActionListener(listener);  // 登陆按钮添加监听
 
 

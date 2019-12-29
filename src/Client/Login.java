@@ -42,8 +42,6 @@ public class Login {
         panel2.add(pwdField);
         panel2.add(loginButton);
         panel2.add(registerButton);
-
-
         mainPanel.add(panel1, BorderLayout.NORTH);
         mainPanel.add(panel2, BorderLayout.CENTER);
 
@@ -52,6 +50,7 @@ public class Login {
         loginListener.setJTextField(textField);  // 将用户名传入
         loginListener.setJPasswordField(pwdField); //将密码传入
         loginListener.setJFrame(frame); //将整个框架传入
+        pwdField.addActionListener(loginListener); //文本域监听，敲击回车触发事件
         loginButton.addActionListener(loginListener);  // 登陆按钮添加监听
 
         registerListen = new Client().new RegisterListen(); // 新建注册按钮监听类

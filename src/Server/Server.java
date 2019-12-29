@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 服务器类：用于开启服务器后端界面，监听9700端口，开启文本读取线程和文件传输线程
+ */
 public class Server{
     static ServerSocket server = null; //服务器连接
     static Socket client = null; //客户端连接
