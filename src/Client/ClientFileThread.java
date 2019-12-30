@@ -23,7 +23,7 @@ public class ClientFileThread extends Thread{
     public void run() {
         try {
             InetAddress addr = InetAddress.getByName(null);  // 获取主机地址
-            socket = new Socket("192.168.1.105", 8848);  // 客户端套接字
+            socket = new Socket(addr, 8848);  // 客户端套接字
             fileIn = new DataInputStream(socket.getInputStream());  // 输入流
             fileOut = new DataOutputStream(socket.getOutputStream());  // 输出流
             // 接收文件

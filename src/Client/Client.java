@@ -120,7 +120,7 @@ public class Client extends Thread {
                 // 建立和服务器的联系
                 try {
                     InetAddress addr = InetAddress.getByName(null);  // 获取主机地址
-                    mySocket = new Socket("192.168.1.105",9700);  // 客户端套接字
+                    mySocket = new Socket(addr,9700);  // 客户端套接字
                     loginJFrame.setVisible(false);  // 隐藏登录窗口
                     out = new PrintWriter(mySocket.getOutputStream());  // 输出流
                     out.println("用户【" + userName + "】进入聊天室！");  // 发送用户名给服务器

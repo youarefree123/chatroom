@@ -17,7 +17,7 @@ public class Server{
     public static void main(String[] args) {
         Backstage backstage = new Backstage();  // 创建聊天室后台系统界面
         try {
-            // 在服务器端对客户端开启文件传输的线程
+            // 在服务器端开启文件传输的线程
             ServerFileThread sft = new ServerFileThread();
             sft.start();
             server = new ServerSocket(9700);  // 服务器端套接字
